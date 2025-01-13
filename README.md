@@ -28,5 +28,5 @@ Then build and run the `docker-compose` file.
 ```powershell
 # build and run
 docker compose up --build -d
-# Access RAVEN at: http://localhost
+# Access at: http://localhost
 ```

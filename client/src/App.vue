@@ -7,6 +7,7 @@ import IconDownload from "~icons/material-symbols/download-2-rounded";
 import IconWeb from "~icons/mdi/web";
 import IconGithub from "~icons/mdi/github";
 import fetcher from "./lib/fetcher";
+import reader from "./lib/reader";
 
 var file = ref(null);
 var dragging = ref(false);
@@ -62,10 +63,15 @@ const onFileChange = async (e) => {
   if (!file.value.files.length) return;
   var f = file.value.files[0];
   reset();
+
+  console.log(f);
+
+  if (!(await verifyFile(f))) return;
   loading.value = true;
 
   const formData = new FormData();
   formData.append("file", f, f.name);
+
   const get = await fetcher.upload("api/wormpicker", formData);
   console.log(get.data);
 
@@ -79,6 +85,34 @@ const onFileChange = async (e) => {
   loadGrids(get.data);
 
   loading.value = false;
+};
+
+const verifyFile = async (file) => {
+  try {
+    if (!file) return false;
+    if (file.type !== "text/csv") {
+      error.value = "Invalid file type. Please upload a CSV file";
+      return false;
+    }
+    // check if the first row of the filecontent contains the correct headers
+    var content = await reader.read(file);
+    const firstRow = content.split("\n")[0];
+    const headers = firstRow.split(",");
+    const expectedHeaders = ["sampleid", "lat", "long"];
+    const hasHeaders = expectedHeaders.every((header) => headers.map((h) => h.trim().toLowerCase()).includes(header.toLowerCase()));
+
+    console.log(headers, expectedHeaders, hasHeaders);
+
+    if (!hasHeaders) {
+      error.value = "Invalid file content. Please make sure the file contains sampleid, lat, long headers";
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    error.value = "An error occurred while verifying the file";
+    return false;
+  }
 };
 
 const loadGrids = async (data) => {

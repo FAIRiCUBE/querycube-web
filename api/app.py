@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import Depends, FastAPI, HTTPException, UploadFile, File
+from fastapi import Depends, FastAPI, HTTPException, UploadFile, File, Form
 
 from argparse import ArgumentParser
 
@@ -17,11 +17,6 @@ from tempfile import NamedTemporaryFile
 
 
 app = FastAPI()
-
-
-@app.get("/api/test")
-def test():
-    return {"test": "success"}
 
 
 @app.post("/api/wormpicker")

@@ -5,21 +5,26 @@ import IconError from "~icons/clarity/error-standard-solid";
 import IconLoading from "~icons/mingcute/loading-fill";
 import IconDownload from "~icons/material-symbols/download-2-rounded";
 import IconWeb from "~icons/mdi/web";
+import IconSpinner from "~icons/svg-spinners/3-dots-rotate";
 import IconGithub from "~icons/mdi/github";
+import IconHelp from "~icons/ic/twotone-help";
 import fetcher from "./lib/fetcher";
 import reader from "./lib/reader";
+import Popup from "./components/Popup.vue";
 
 var file = ref(null);
 var dragging = ref(false);
 var loading = ref(false);
 var error = ref(null);
+var showPopup = ref(false);
+let isLoaded = ref(false);
 
 let datagrid = null;
 let logGrid = null;
+let layerInfo = null;
 
 onMounted(async () => {
-  console.log("Hoi");
-
+  console.log("Hello Wormpicker");
   datagrid = initGrid("#dataGrid");
   logGrid = initGrid("#logGrid");
 });
@@ -71,6 +76,7 @@ const onFileChange = async (e) => {
 
   const formData = new FormData();
   formData.append("file", f, f.name);
+  formData.append("layer_info", layerInfo);
 
   const get = await fetcher.upload("api/wormpicker", formData);
   console.log(get.data);
@@ -149,6 +155,34 @@ const reset = () => {
 </script>
 
 <template>
+  <popup :show="showPopup" title="Documentation" @on-close="showPopup = false">
+    <div class="flex flex-col gap-2">
+      <div class="flex flex-col">
+        <div class="font-bold">Requirements for the file to upload</div>
+        <div class="px-2">- It must be a csv file</div>
+        <div class="px-2">
+          - The file must include the headers
+          <span class="italic">sampleid, lat, long</span>
+        </div>
+        <div class="px-2">
+          - The header
+          <span class="italic">date</span>
+          is optional
+        </div>
+        <div class="px-2 text-blue-600">
+          -
+          <a href="samplesfile.csv" class="hover:text-teal-600">Download a samplefile</a>
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <div class="font-bold">Layers</div>
+        <div class="px-2 text-blue-600">
+          -
+          <a href="https://fairicube.rasdaman.com/rasdaman/ows#/services" class="hover:text-teal-600" target="_blank">See available layers here</a>
+        </div>
+      </div>
+    </div>
+  </popup>
   <!-- LOGO -->
   <div class="flex flex-col self-center">
     <img src="/fairicube_logo.png" class="w-20 self-center" />
@@ -160,7 +194,7 @@ const reset = () => {
   </div>
 
   <!-- OPTIONS -->
-  <div class="self-center flex">
+  <div class="self-center flex flex-col items-center gap-2">
     <div class="rounded border-2 border-dashed md:w-[800px] bg-white p-6 flex flex-col items-center gap-2 hover:cursor-pointer hover:border-teal-600" :class="[dragging ? 'border-teal-600 ' : 'border-gray-400 ']" @dragover="onFileDragover" @dragleave="onFileDragleave" @drop="onFileDrop" @click="$refs.file.click()">
       <div>
         <icon-add class="text-xl" v-if="!loading" />
@@ -176,6 +210,10 @@ const reset = () => {
       </div>
       <!-- <div class="text-sm font-bold">Max file size: 10 MB</div> -->
       <input type="file" class="hidden" accept=".csv" ref="file" @change="onFileChange" />
+    </div>
+    <div class="flex cursor-pointer gap-1 hover:text-blue-600 text-gray-700" @click="showPopup = true">
+      <icon-help class="self-center" />
+      <div class="self-center">Documentation</div>
     </div>
   </div>
 

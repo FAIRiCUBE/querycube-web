@@ -17,7 +17,7 @@ var dragging = ref(false);
 var loading = ref(false);
 var error = ref(null);
 var showPopup = ref(false);
-let isLoaded = ref(false);
+var showConfirm = ref(false);
 
 let datagrid = null;
 let logGrid = null;
@@ -64,7 +64,13 @@ const downloadGrid = (grid, filename) => {
   grid.exportDataAsCsv(params);
 };
 
+const showConfirmPopup = async (e) => {
+  showConfirm.value = true;
+};
+
 const onFileChange = async (e) => {
+  console.log("File changed");
+
   if (!file.value.files.length) return;
   var f = file.value.files[0];
   reset();
@@ -139,7 +145,7 @@ const onFileDragleave = (e) => {
 const onFileDrop = (e) => {
   e.preventDefault();
   file.value.files = e.dataTransfer.files;
-  onFileChange();
+  showConfirm.value = true;
   dragging.value = false;
 };
 
@@ -155,6 +161,43 @@ const reset = () => {
 </script>
 
 <template>
+  <popup :show="showConfirm" title="Is this the file you want to upload?">
+    <div class="flex flex-col gap-2">
+      <div class="flex gap-1">
+        <div class="font-bold">File:</div>
+        <div class="flex-1 truncate">{{ file ? file.files[0].name : "" }}</div>
+      </div>
+      <div class="flex gap-1">
+        <div class="font-bold">Size:</div>
+        <div class="flex-1 truncate">{{ file ? file.files[0].size : "" }}</div>
+      </div>
+      <div class="flex gap-1 mb-2">
+        <div class="font-bold">Type:</div>
+        <div class="flex-1 truncate">{{ file ? file.files[0].type : "" }}</div>
+      </div>
+      <div class="border-b"></div>
+      <div class="flex gap-2 mt-2">
+        <button
+          class="btn btn-primary"
+          @click="
+            showConfirm = false;
+            reset();
+          "
+        >
+          No
+        </button>
+        <button
+          class="btn btn-primary"
+          @click="
+            showConfirm = false;
+            onFileChange();
+          "
+        >
+          Yes
+        </button>
+      </div>
+    </div>
+  </popup>
   <popup :show="showPopup" title="Documentation" @on-close="showPopup = false">
     <div class="flex flex-col gap-2">
       <div class="flex flex-col">
@@ -209,7 +252,7 @@ const reset = () => {
         </span>
       </div>
       <!-- <div class="text-sm font-bold">Max file size: 10 MB</div> -->
-      <input type="file" class="hidden" accept=".csv" ref="file" @change="onFileChange" />
+      <input type="file" class="hidden" accept=".csv" ref="file" @change="showConfirm = true" />
     </div>
     <div class="flex cursor-pointer gap-1 hover:text-blue-600 text-gray-700" @click="showPopup = true">
       <icon-help class="self-center" />
@@ -259,5 +302,9 @@ body {
 
 #app {
   @apply flex flex-col min-h-full items-stretch relative flex-1 w-full h-full p-6 gap-6;
+}
+
+.btn {
+  @apply border border-gray-300 rounded px-4 py-1 text-sm font-semibold hover:bg-gray-100;
 }
 </style>

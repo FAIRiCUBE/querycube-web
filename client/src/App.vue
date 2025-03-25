@@ -229,7 +229,7 @@ const reset = () => {
   <!-- LOGO -->
   <div class="flex flex-col self-center">
     <img src="/fairicube_logo.png" class="w-20 self-center" />
-    <div class="self-center font-semibold text-lg">Wormpicker</div>
+    <div class="self-center font-semibold text-lg">Querycube</div>
     <div class="flex gap-2 self-center text-lg">
       <a href="https://fairicube.nilu.no/"><icon-web class="self-center text-[#5e81ac] hover:text-teal-600 hover:cursor-pointer" /></a>
       <a href="https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/WormPickerOOP"><icon-github class="self-center text-[#b48ead] hover:text-teal-600 hover:cursor-pointer" /></a>

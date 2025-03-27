@@ -5,11 +5,11 @@ from fastapi import Depends, FastAPI, HTTPException, UploadFile, File, Form
 from argparse import ArgumentParser
 
 from fastapi.responses import JSONResponse
-from lib.wormpicker.module_crs_converter import trans4mEPSG
-from lib.wormpicker.Objects import *
-from lib.wormpicker.UserCred import saveCredentials
-from lib.wormpicker.GetLayers_Window import getLayers
-from lib.wormpicker.functions import *
+from lib.querycube.module_crs_converter import trans4mEPSG
+from lib.querycube.Objects import *
+from lib.querycube.UserCred import saveCredentials
+from lib.querycube.GetLayers_Window import getLayers
+from lib.querycube.functions import *
 import re
 import os
 import pandas as pd
@@ -19,8 +19,8 @@ from tempfile import NamedTemporaryFile
 app = FastAPI()
 
 
-@app.post("/api/wormpicker")
-def wormpicker(file: UploadFile = File(...)):
+@app.post("/api/querycube")
+def querycube(file: UploadFile = File(...)):
 
     try:
 

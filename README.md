@@ -1,11 +1,11 @@
-# Wormpicker Web
+# QueryCube Web
 
-A web version of the wormpicker tool https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/WormPickerOOP
+A web version of the querycube tool https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/QueryCube
 
 ## **Clone repository from git**
 
 ```bash
-git clone https://github.com/FAIRiCUBE/wormpicker-web
+git clone https://github.com/FAIRiCUBE/querycube-web
 ```
 
 ## Set environment varables

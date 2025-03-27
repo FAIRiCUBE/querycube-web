@@ -24,7 +24,7 @@ let logGrid = null;
 let layerInfo = null;
 
 onMounted(async () => {
-  console.log("Hello Wormpicker");
+  console.log("Hello QueryCube");
   datagrid = initGrid("#dataGrid");
   logGrid = initGrid("#logGrid");
 });
@@ -84,7 +84,7 @@ const onFileChange = async (e) => {
   formData.append("file", f, f.name);
   formData.append("layer_info", layerInfo);
 
-  const get = await fetcher.upload("api/wormpicker", formData);
+  const get = await fetcher.upload("api/querycube", formData);
   console.log(get.data);
 
   if (get.isError) {
@@ -229,10 +229,10 @@ const reset = () => {
   <!-- LOGO -->
   <div class="flex flex-col self-center">
     <img src="/fairicube_logo.png" class="w-20 self-center" />
-    <div class="self-center font-semibold text-lg">Querycube</div>
+    <div class="self-center font-semibold text-lg">QueryCube</div>
     <div class="flex gap-2 self-center text-lg">
       <a href="https://fairicube.nilu.no/"><icon-web class="self-center text-[#5e81ac] hover:text-teal-600 hover:cursor-pointer" /></a>
-      <a href="https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/WormPickerOOP"><icon-github class="self-center text-[#b48ead] hover:text-teal-600 hover:cursor-pointer" /></a>
+      <a href="https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/QueryCube"><icon-github class="self-center text-[#b48ead] hover:text-teal-600 hover:cursor-pointer" /></a>
     </div>
   </div>
 
@@ -274,7 +274,7 @@ const reset = () => {
   <div class="w-full flex flex-col">
     <div class="flex gap-2">
       <div class="font-bold self-center">Result</div>
-      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'wormpicker_result.csv')" />
+      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
     </div>
     <div id="dataGrid" class="w-full"></div>
   </div>
@@ -283,7 +283,7 @@ const reset = () => {
   <div class="w-full flex flex-col">
     <div class="flex gap-2">
       <div class="font-bold self-center">Log</div>
-      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'wormpicker_log.csv')" />
+      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
     </div>
     <div id="logGrid" class="w-full"></div>
   </div>

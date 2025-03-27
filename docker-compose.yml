@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile.api
-    image: wormpicker-api
-    container_name: wormpicker-api
+    image: querycube-api
+    container_name: querycube-api
     sysctls:
       - net.ipv4.tcp_keepalive_time=200
     ports:
@@ -15,8 +15,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile.client
-    image: wormpicker-client
-    container_name: wormpicker-client
+    image: querycube-client
+    container_name: querycube-client
     depends_on:
       - api
     ports:

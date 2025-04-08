@@ -11,6 +11,7 @@ import IconHelp from "~icons/ic/twotone-help";
 import fetcher from "./lib/fetcher";
 import reader from "./lib/reader";
 import Popup from "./components/Popup.vue";
+import MapComponent from "./components/Map.vue";
 
 var file = ref(null);
 var dragging = ref(false);
@@ -158,6 +159,10 @@ const reset = () => {
   file.value = null;
   error.value = null;
 };
+
+const handlePointSelected = (point) => {
+  console.log("Point selected:", point);
+};
 </script>
 
 <template>
@@ -244,7 +249,7 @@ const reset = () => {
         <icon-loading class="text-2xl animate-spin" v-else />
       </div>
       <div class="text-center">
-        <span v-if="!loading">Drag and drop or click to upload file and generate data</span>
+        <span v-if="!loading">Drag and drop it like it's hot, or click to upload file and generate data</span>
         <span v-else>
           <b>Loading...</b>
           <br />
@@ -286,6 +291,12 @@ const reset = () => {
       <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
     </div>
     <div id="logGrid" class="w-full"></div>
+  </div>
+
+  <!-- INTERACTIVE MAP -->
+  <div class="w-full flex flex-col">
+    <div class="font-bold self-center">Interactive Map</div>
+    <MapComponent @pointSelected="handlePointSelected" />
   </div>
 </template>
 

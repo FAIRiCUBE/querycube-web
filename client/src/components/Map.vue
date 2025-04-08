@@ -1,5 +1,17 @@
 <template>
-  <div id="map" style="height: 500px; width: 100%"></div>
+  <div class="map-container">
+    <div class="coordinates-list">
+      <h3>Saved Coordinates</h3>
+      <ul>
+        <li v-for="(point, index) in savedPoints" :key="index">
+          {{ point.name }}
+          <button @click="deletePoint(index)">Delete</button>
+        </li>
+      </ul>
+      <button @click="generateCSV">Download Query in CSV format</button>
+    </div>
+    <div id="map" style="height: 500px; width: 100%"></div>
+  </div>
 </template>
 
 <script>
@@ -9,6 +21,11 @@ import "leaflet/dist/leaflet.css";
 export default {
   name: "MapComponent",
   emits: ["pointSelected"],
+  data() {
+    return {
+      savedPoints: []
+    };
+  },
   mounted() {
     // Initialize the map
     this.map = L.map("map").setView([51.505, -0.09], 13);
@@ -42,10 +59,32 @@ export default {
       saveButton.addEventListener("click", () => {
         const name = nameInput.value;
         const date = dateInput.value;
-        this.$emit("pointSelected", { lat, lng, name, date });
+        if (name) {
+          this.savedPoints.push({ lat, lng, name, date });
+          this.$emit("pointSelected", { lat, lng, name, date });
+        }
         this.map.closePopup(popup);
       });
     });
+  },
+  methods: {
+    deletePoint(index) {
+      this.savedPoints.splice(index, 1);
+    },
+    generateCSV() {
+      const csvContent = ["sampleId,lat,long,date"];
+      this.savedPoints.forEach((point) => {
+        const date = point.date ? point.date.split("T")[0] : "";
+        csvContent.push(`${point.name},${point.lat},${point.lng},${date}`);
+      });
+      const blob = new Blob([csvContent.join("\n")], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "coordinates.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
   },
   beforeUnmount() {
     this.map.remove();
@@ -54,6 +93,57 @@ export default {
 </script>
 
 <style>
+.map-container {
+  position: relative;
+}
+
+.coordinates-list {
+  position: absolute;
+  top: 10px;
+  right: 10px; /* Move to the top right */
+  background: rgba(255, 255, 255, 0.2); /* Glassmorphism effect */
+  backdrop-filter: blur(10px); /* Blur effect */
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+}
+
+.coordinates-list h3 {
+  margin: 0 0 10px;
+  color: #333;
+  font-weight: bold;
+}
+
+.coordinates-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+}
+
+.coordinates-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.coordinates-list button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.coordinates-list button:hover {
+  background: #0056b3;
+}
+
 #map {
   height: 100%;
   width: 100%;

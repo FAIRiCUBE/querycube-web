@@ -46,7 +46,7 @@ export default {
       nameInput.type = "text";
       nameInput.placeholder = "Enter name";
       const dateInput = document.createElement("input");
-      dateInput.type = "datetime-local";
+      dateInput.type = "date"; // Changed from datetime-local to date
       const saveButton = document.createElement("button");
       saveButton.textContent = "Save";
 
@@ -58,10 +58,13 @@ export default {
 
       saveButton.addEventListener("click", () => {
         const name = nameInput.value;
-        const date = dateInput.value;
-        if (name) {
+        const date = dateInput.value.split("T")[0]; // Extract only the date part
+        if (name && date) {
+          // Ensure both name and date are provided
           this.savedPoints.push({ lat, lng, name, date });
           this.$emit("pointSelected", { lat, lng, name, date });
+        } else {
+          alert("Please enter a name and select a valid date.");
         }
         this.map.closePopup(popup);
       });

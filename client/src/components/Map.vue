@@ -9,6 +9,7 @@
         </li>
       </ul>
       <button @click="generateCSV">Download Query in CSV format</button>
+      <button @click="sendCoordinatesToAPI">Send Coordinates to API</button>
     </div>
     <div id="map" style="height: 500px; width: 100%"></div>
   </div>
@@ -87,6 +88,32 @@ export default {
       link.download = "coordinates.csv";
       link.click();
       URL.revokeObjectURL(url);
+    },
+    sendCoordinatesToAPI() {
+      const apiUrl = "/api/coordinates"; // Replace with your actual API endpoint
+      const payload = this.savedPoints;
+
+      fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to send coordinates to the API");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Coordinates successfully sent to the API:", data);
+          alert("Coordinates successfully sent to the API");
+        })
+        .catch((error) => {
+          console.error("Error sending coordinates to the API:", error);
+          alert("Error sending coordinates to the API");
+        });
     }
   },
   beforeUnmount() {
@@ -134,17 +161,19 @@ export default {
 }
 
 .coordinates-list button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background 0.3s;
+  background: #4caf50; /* Green background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  padding: 1px 2px; /* Smaller padding */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 0.9em; /* Slightly smaller font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background 0.3s, transform 0.2s; /* Smooth transition for hover effects */
 }
 
 .coordinates-list button:hover {
-  background: #0056b3;
+  background: #45a049; /* Darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect */
 }
 
 #map {

@@ -30,6 +30,7 @@
 <script>
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import fetcher from "../lib/fetcher"; // Import fetcher
 
 export default {
   name: "MapComponent",
@@ -101,31 +102,26 @@ export default {
       link.click();
       URL.revokeObjectURL(url);
     },
-    sendCoordinatesToAPI() {
-      const apiUrl = "/api/coordinates"; // Replace with your actual API endpoint
-      const payload = this.savedPoints;
+    async sendCoordinatesToAPI() {
+      const apiUrl = "/api/querycube"; // Use the same endpoint as in App.vue
+      const payload = {
+        points: this.savedPoints, // Send the savedPoints data
+        layer_info: null // Add any additional data if needed
+      };
 
-      fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to send coordinates to the API");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Coordinates successfully sent to the API:", data);
+      try {
+        const response = await fetcher.post(apiUrl, payload); // Use fetcher's post function
+        if (response.isError) {
+          console.error("Error sending data:", response.error);
+          alert("Failed to send coordinates to the API");
+        } else {
+          console.log("API Response:", response.data);
           alert("Coordinates successfully sent to the API");
-        })
-        .catch((error) => {
-          console.error("Error sending coordinates to the API:", error);
-          alert("Error sending coordinates to the API");
-        });
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        alert("An unexpected error occurred");
+      }
     }
   },
   beforeUnmount() {

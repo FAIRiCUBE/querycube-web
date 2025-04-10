@@ -30,7 +30,7 @@
 <script>
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import fetcher from "../lib/fetcher"; // Import fetcher
+import fetcher from "./../lib/fetcher"; // Import fetcher
 
 export default {
   name: "MapComponent",
@@ -75,8 +75,10 @@ export default {
         const date = dateInput.value.split("T")[0]; // Extract only the date part
         if (name && date) {
           // Ensure both name and date are provided
-          this.savedPoints.push({ lat, lng, name, date });
-          this.$emit("pointSelected", { lat, lng, name, date });
+          const roundedLat = parseFloat(lat.toFixed(Math.min(8, lat.toString().split(".")[1]?.length || 0))); // Max 8 decimal places
+          const roundedLng = parseFloat(lng.toFixed(Math.min(8, lng.toString().split(".")[1]?.length || 0))); // Max 8 decimal places
+          this.savedPoints.push({ lat: roundedLat, lng: roundedLng, name, date });
+          this.$emit("pointSelected", { lat: roundedLat, lng: roundedLng, name, date });
         } else {
           alert("Please enter a name and select a valid date.");
         }
@@ -103,24 +105,49 @@ export default {
       URL.revokeObjectURL(url);
     },
     async sendCoordinatesToAPI() {
-      const apiUrl = "/api/querycube"; // Use the same endpoint as in App.vue
-      const payload = {
-        points: this.savedPoints, // Send the savedPoints data
-        layer_info: null // Add any additional data if needed
-      };
+      // Generate CSV content
+      const csvContent = ["sampleId,lat,long,date"];
+      this.savedPoints.forEach((point) => {
+        const date = point.date ? point.date.split("T")[0] : "";
+        csvContent.push(`${point.name},${point.lat},${point.lng},${date}`);
+        console.log(`Point: ${point.name}, Lat: ${point.lat}, Lng: ${point.lng}, Date: ${date}`);
+      });
 
+      // Create a Blob for the CSV file
+      const blob = new Blob([csvContent.join("\n")], { type: "text/csv" });
+      const file = new File([blob], "coordinates.csv", { type: "text/csv" });
+
+      // Log the file for debugging
+      console.log("Generated CSV file:", file);
+
+      // Prepare FormData
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+      formData.append("layer_info", "layerInfoPlaceholder"); // Replace with actual layer info if needed
+
+      // Log the request payload for debugging
+      console.log("Request payload (FormData):");
+      console.log(formData);
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      // Send the FormData to the API
       try {
-        const response = await fetcher.post(apiUrl, payload); // Use fetcher's post function
+        const response = await fetcher.upload("api/querycube", formData);
+        console.log(response.data);
+
         if (response.isError) {
-          console.error("Error sending data:", response.error);
-          alert("Failed to send coordinates to the API");
-        } else {
-          console.log("API Response:", response.data);
-          alert("Coordinates successfully sent to the API");
+          console.error(response.error);
+          alert(`Error: ${response.error.message}`);
+          return;
         }
+
+        // Handle successful response
+        alert("Coordinates successfully sent to the API.");
       } catch (error) {
-        console.error("Unexpected error:", error);
-        alert("An unexpected error occurred");
+        console.error("Error sending coordinates to API:", error);
+        alert("An error occurred while sending coordinates to the API.");
       }
     }
   },

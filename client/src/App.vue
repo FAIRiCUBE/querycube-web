@@ -275,9 +275,9 @@ const handlePointSelected = (point) => {
   </div>
 
   <!-- BOTTOM SECTION -->
-  <div class="bottom-section w-full p-6">
+  <div class="bottom-section w-[90%] mx-auto px-6 z-10 rounded-lg shadow-lg bg-white/80">
     <!-- RESULTS -->
-    <div class="w-full flex flex-col">
+    <div class="w-full flex flex-col z-10">
       <div class="flex gap-2">
         <div class="font-bold self-center">Result</div>
         <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
@@ -286,7 +286,7 @@ const handlePointSelected = (point) => {
     </div>
 
     <!-- LOG -->
-    <div class="w-full flex flex-col mt-6">
+    <div class="w-full flex flex-col mt-6 z-10">
       <div class="flex gap-2">
         <div class="font-bold self-center">Log</div>
         <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
@@ -308,7 +308,7 @@ body {
 }
 
 #app {
-  @apply flex flex-col min-h-full items-stretch relative flex-1 w-full h-full gap-6;
+  @apply flex flex-col min-h-full items-stretch relative flex-1 w-full h-full;
 }
 
 .top-section {
@@ -317,10 +317,12 @@ body {
 
 .bottom-section {
   @apply bg-white;
+  margin-top: 0; /* Remove any space between sections */
+  padding-top: 1rem;
 }
 
 .glassmorphism-container {
-  @apply bg-white/30 backdrop-blur-md shadow-md;
+  @apply bg-white/60 backdrop-blur-md shadow-md;
 }
 
 .pointer-events-none {

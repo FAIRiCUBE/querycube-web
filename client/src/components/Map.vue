@@ -168,10 +168,10 @@ export default {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(3px);
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   border: 1px solid rgba(255, 255, 255, 0.3);

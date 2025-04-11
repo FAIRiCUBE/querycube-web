@@ -231,88 +231,104 @@ const handlePointSelected = (point) => {
       </div>
     </div>
   </popup>
-  <!-- LOGO -->
-  <div class="flex flex-col self-center">
-    <img src="/fairicube_logo.png" class="w-20 self-center" />
-    <div class="self-center font-semibold text-lg">QueryCube</div>
-    <div class="flex gap-2 self-center text-lg">
-      <a href="https://fairicube.nilu.no/"><icon-web class="self-center text-[#5e81ac] hover:text-teal-600 hover:cursor-pointer" /></a>
-      <a href="https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/QueryCube"><icon-github class="self-center text-[#b48ead] hover:text-teal-600 hover:cursor-pointer" /></a>
-    </div>
-  </div>
 
-  <!-- OPTIONS -->
-  <div class="self-center flex flex-col items-center gap-2">
-    <div class="rounded border-2 border-dashed md:w-[800px] bg-white p-6 flex flex-col items-center gap-2 hover:cursor-pointer hover:border-teal-600" :class="[dragging ? 'border-teal-600 ' : 'border-gray-400 ']" @dragover="onFileDragover" @dragleave="onFileDragleave" @drop="onFileDrop" @click="$refs.file.click()">
-      <div>
-        <icon-add class="text-xl" v-if="!loading" />
-        <icon-loading class="text-2xl animate-spin" v-else />
+  <!-- TOP SECTION -->
+  <div class="top-section relative w-full h-[60vh]">
+    <MapComponent class="absolute inset-0 z-0" @pointSelected="handlePointSelected" />
+    <div class="absolute top-0 left-0 right-0 z-10 flex flex-col items-center pointer-events-none">
+      <!-- LOGO AND OPTIONS CONTAINER -->
+      <div class="glassmorphism-container w-full max-w-[500px] mt-4 p-4 rounded-lg pointer-events-auto">
+        <!-- LOGO -->
+        <div class="flex flex-col items-center">
+          <img src="/fairicube_logo.png" class="w-20" />
+          <div class="font-semibold text-lg">QueryCube</div>
+          <div class="flex gap-2 text-lg">
+            <a href="https://fairicube.nilu.no/"><icon-web class="text-[#5e81ac] hover:text-teal-600 hover:cursor-pointer" /></a>
+            <a href="https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/QueryCube"><icon-github class="text-[#b48ead] hover:text-teal-600 hover:cursor-pointer" /></a>
+          </div>
+        </div>
+
+        <!-- OPTIONS -->
+        <div class="flex flex-col items-center gap-2 mt-4">
+          <div class="rounded border-2 border-dashed bg-white p-6 flex flex-col items-center gap-2 hover:cursor-pointer hover:border-teal-600" :class="[dragging ? 'border-teal-600 ' : 'border-gray-400 ']" @dragover="onFileDragover" @dragleave="onFileDragleave" @drop="onFileDrop" @click="$refs.file.click()">
+            <div>
+              <icon-add class="text-xl" v-if="!loading" />
+              <icon-loading class="text-2xl animate-spin" v-else />
+            </div>
+            <div class="text-center">
+              <span v-if="!loading">Drag and drop it like it's hot, or click to upload file and generate data</span>
+              <span v-else>
+                <b>Loading...</b>
+                <br />
+                This may take a while...
+              </span>
+            </div>
+            <input type="file" class="hidden" accept=".csv" ref="file" @change="showConfirm = true" />
+          </div>
+          <div class="flex cursor-pointer gap-1 hover:text-blue-600 text-gray-700" @click="showPopup = true">
+            <icon-help class="self-center" />
+            <div class="self-center">Documentation</div>
+          </div>
+        </div>
       </div>
-      <div class="text-center">
-        <span v-if="!loading">Drag and drop it like it's hot, or click to upload file and generate data</span>
-        <span v-else>
-          <b>Loading...</b>
-          <br />
-          This may take a while...
-        </span>
+    </div>
+  </div>
+
+  <!-- BOTTOM SECTION -->
+  <div class="bottom-section w-full p-6">
+    <!-- RESULTS -->
+    <div class="w-full flex flex-col">
+      <div class="flex gap-2">
+        <div class="font-bold self-center">Result</div>
+        <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
       </div>
-      <!-- <div class="text-sm font-bold">Max file size: 10 MB</div> -->
-      <input type="file" class="hidden" accept=".csv" ref="file" @change="showConfirm = true" />
+      <div id="dataGrid" class="w-full"></div>
     </div>
-    <div class="flex cursor-pointer gap-1 hover:text-blue-600 text-gray-700" @click="showPopup = true">
-      <icon-help class="self-center" />
-      <div class="self-center">Documentation</div>
-    </div>
-  </div>
 
-  <!-- ERROR -->
-  <div v-if="error" class="flex flex-col self-center md:w-[800px] border border-gray-300 rounded bg-white p-2 gap-2">
-    <div class="flex gap-2">
-      <div class="self-center">
-        <icon-error class="text-red-500" />
+    <!-- LOG -->
+    <div class="w-full flex flex-col mt-6">
+      <div class="flex gap-2">
+        <div class="font-bold self-center">Log</div>
+        <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
       </div>
-      <div class="self-center flex-1">{{ error }}</div>
+      <div id="logGrid" class="w-full"></div>
     </div>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="w-full flex flex-col">
-    <div class="flex gap-2">
-      <div class="font-bold self-center">Result</div>
-      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
-    </div>
-    <div id="dataGrid" class="w-full"></div>
-  </div>
-
-  <!-- LOG -->
-  <div class="w-full flex flex-col">
-    <div class="flex gap-2">
-      <div class="font-bold self-center">Log</div>
-      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
-    </div>
-    <div id="logGrid" class="w-full"></div>
-  </div>
-
-  <!-- INTERACTIVE MAP -->
-  <div class="w-full flex flex-col">
-    <div class="font-bold self-center">Interactive Map</div>
-    <MapComponent @pointSelected="handlePointSelected" />
   </div>
 </template>
 
 <style>
 html,
 body {
-  @apply h-full w-full text-[17px];
+  @apply h-full w-full text-[17px] m-0;
 }
 
 body {
-  @apply h-full font-sans antialiased m-0;
+  @apply h-full font-sans antialiased;
   background-color: #ededeb;
 }
 
 #app {
-  @apply flex flex-col min-h-full items-stretch relative flex-1 w-full h-full p-6 gap-6;
+  @apply flex flex-col min-h-full items-stretch relative flex-1 w-full h-full gap-6;
+}
+
+.top-section {
+  @apply relative;
+}
+
+.bottom-section {
+  @apply bg-white;
+}
+
+.glassmorphism-container {
+  @apply bg-white/30 backdrop-blur-md shadow-md;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
 }
 
 .btn {

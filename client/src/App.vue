@@ -166,76 +166,13 @@ const handlePointSelected = (point) => {
 </script>
 
 <template>
-  <popup :show="showConfirm" title="Is this the file you want to upload?">
-    <div class="flex flex-col gap-2">
-      <div class="flex gap-1">
-        <div class="font-bold">File:</div>
-        <div class="flex-1 truncate">{{ file ? file.files[0].name : "" }}</div>
-      </div>
-      <div class="flex gap-1">
-        <div class="font-bold">Size:</div>
-        <div class="flex-1 truncate">{{ file ? file.files[0].size : "" }}</div>
-      </div>
-      <div class="flex gap-1 mb-2">
-        <div class="font-bold">Type:</div>
-        <div class="flex-1 truncate">{{ file ? file.files[0].type : "" }}</div>
-      </div>
-      <div class="border-b"></div>
-      <div class="flex gap-2 mt-2">
-        <button
-          class="btn btn-primary"
-          @click="
-            showConfirm = false;
-            reset();
-          "
-        >
-          No
-        </button>
-        <button
-          class="btn btn-primary"
-          @click="
-            showConfirm = false;
-            onFileChange();
-          "
-        >
-          Yes
-        </button>
-      </div>
-    </div>
-  </popup>
-  <popup :show="showPopup" title="Documentation" @on-close="showPopup = false">
-    <div class="flex flex-col gap-2">
-      <div class="flex flex-col">
-        <div class="font-bold">Requirements for the file to upload</div>
-        <div class="px-2">- It must be a csv file</div>
-        <div class="px-2">
-          - The file must include the headers
-          <span class="italic">sampleid, lat, long</span>
-        </div>
-        <div class="px-2">
-          - The header
-          <span class="italic">date</span>
-          is optional
-        </div>
-        <div class="px-2 text-blue-600">
-          -
-          <a href="samplesfile.csv" class="hover:text-teal-600">Download a samplefile</a>
-        </div>
-      </div>
-      <div class="flex flex-col">
-        <div class="font-bold">Layers</div>
-        <div class="px-2 text-blue-600">
-          -
-          <a href="https://fairicube.rasdaman.com/rasdaman/ows#/services" class="hover:text-teal-600" target="_blank">See available layers here</a>
-        </div>
-      </div>
-    </div>
-  </popup>
+  <!-- MAP BACKGROUND -->
+  <MapComponent class="fixed inset-0 z-0 pointer-events-auto" @pointSelected="handlePointSelected" />
 
-  <!-- TOP SECTION -->
-  <div class="top-section relative w-full h-[60vh]">
-    <MapComponent class="absolute inset-0 z-0" @pointSelected="handlePointSelected" />
-    <div class="absolute top-0 left-0 right-0 z-10 flex flex-col items-center pointer-events-none">
+  <!-- CONTENT -->
+  <div class="content-container relative z-10">
+    <!-- TOP SECTION -->
+    <div class="top-section flex flex-col items-center">
       <!-- LOGO AND OPTIONS CONTAINER -->
       <div class="glassmorphism-container w-full max-w-[500px] mt-4 p-4 rounded-lg pointer-events-auto">
         <!-- LOGO -->
@@ -272,26 +209,26 @@ const handlePointSelected = (point) => {
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- BOTTOM SECTION -->
-  <div class="bottom-section w-[90%] mx-auto px-6 z-10 rounded-lg shadow-lg bg-white/80">
-    <!-- RESULTS -->
-    <div class="w-full flex flex-col z-10">
-      <div class="flex gap-2">
-        <div class="font-bold self-center">Result</div>
-        <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
+    <!-- BOTTOM SECTION -->
+    <div class="bottom-section w-[90%] mx-auto px-6 rounded-lg shadow-lg bg-white/80 pointer-events-auto">
+      <!-- RESULTS -->
+      <div class="w-full flex flex-col">
+        <div class="flex gap-2">
+          <div class="font-bold self-center">Result</div>
+          <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
+        </div>
+        <div id="dataGrid" class="w-full"></div>
       </div>
-      <div id="dataGrid" class="w-full"></div>
-    </div>
 
-    <!-- LOG -->
-    <div class="w-full flex flex-col mt-6 z-10">
-      <div class="flex gap-2">
-        <div class="font-bold self-center">Log</div>
-        <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
+      <!-- LOG -->
+      <div class="w-full flex flex-col mt-6">
+        <div class="flex gap-2">
+          <div class="font-bold self-center">Log</div>
+          <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
+        </div>
+        <div id="logGrid" class="w-full"></div>
       </div>
-      <div id="logGrid" class="w-full"></div>
     </div>
   </div>
 </template>
@@ -305,32 +242,27 @@ body {
 body {
   @apply h-full font-sans antialiased;
   background-color: #ededeb;
+  overflow-y: auto; /* Allow scrolling */
 }
 
 #app {
-  @apply flex flex-col min-h-full items-stretch relative flex-1 w-full h-full;
+  @apply relative flex flex-col min-h-full items-stretch w-full;
+}
+
+.content-container {
+  @apply relative flex flex-col min-h-screen pointer-events-none; /* Disable pointer events by default */
 }
 
 .top-section {
-  @apply relative;
+  @apply h-screen flex flex-col justify-center items-center;
 }
 
 .bottom-section {
-  @apply bg-white;
-  margin-top: 0; /* Remove any space between sections */
-  padding-top: 1rem;
+  @apply min-h-screen mt-0 py-6; /* Ensure it takes up the full screen */
 }
 
 .glassmorphism-container {
-  @apply bg-white/60 backdrop-blur-md shadow-md;
-}
-
-.pointer-events-none {
-  pointer-events: none;
-}
-
-.pointer-events-auto {
-  pointer-events: auto;
+  @apply bg-white/60 backdrop-blur-md shadow-md pointer-events-auto; /* Enable pointer events only for the container */
 }
 
 .btn {

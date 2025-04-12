@@ -23,7 +23,7 @@
         </button>
       </div>
     </div>
-    <div id="map" style="height: 100vh; width: 100%"></div>
+    <div id="map" class="fullscreen-map"></div>
   </div>
 </template>
 
@@ -42,7 +42,7 @@ export default {
   },
   mounted() {
     // Initialize the map
-    this.map = L.map("map").setView([51.505, -0.09], 13);
+    this.map = L.map("map").setView([48.2052, 16.3599], 16); // Correct coordinates for the Natural History Museum in Vienna, Austria
 
     // Add OpenStreetMap tiles
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -246,8 +246,12 @@ export default {
   gap: 10px;
 }
 
-#map {
-  height: 100%;
-  width: 100%;
+.fullscreen-map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
 }
 </style>

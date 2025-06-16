@@ -193,7 +193,7 @@ const handlePointSelected = (point) => {
               <icon-loading class="text-2xl animate-spin" v-else />
             </div>
             <div class="text-center">
-              <span v-if="!loading">Drag and drop it like it's hot, or click to upload file and generate data</span>
+              <span v-if="!loading">Drag and drop, or click to upload file and generate data</span>
               <span v-else>
                 <b>Loading...</b>
                 <br />

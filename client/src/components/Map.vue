@@ -21,10 +21,16 @@
         <button @click="sendCoordinatesToAPI" aria-label="Send to API">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M6 20q-.825 0-1.412-.587T4 18v-2q0-.425.288-.712T5 15t.713.288T6 16v2h12v-2q0-.425.288-.712T19 15t.713.288T20 16v2q0 .825-.587 1.413T18 20zm5-12.15L9.125 9.725q-.3.3-.712.288T7.7 9.7q-.275-.3-.288-.7t.288-.7l3.6-3.6q.15-.15.325-.212T12 4.425t.375.063t.325.212l3.6 3.6q.3.3.288.7t-.288.7q-.3.3-.712.313t-.713-.288L13 7.85V15q0 .425-.288.713T12 16t-.712-.288T11 15z" /></svg>
         </button>
-      </div>
-      <div class="button-group">
-        <button @click="switchToDefaultMap">Default Map</button>
-        <button @click="switchToTopoMap">Topo Map</button>
+        <button @click="switchToDefaultMap" :class="{ active: currentLayerType === 'default' }" aria-label="Default Map">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path fill="currentColor" d="m12 21.05l-9-7l1.65-1.25L12 18.5l7.35-5.7L21 14.05zM12 16L3 9l9-7l9 7zm0-2.55L17.75 9L12 4.55L6.25 9z" />
+          </svg>
+        </button>
+        <button @click="switchToTopoMap" :class="{ active: currentLayerType === 'topo' }" aria-label="Topo Map">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path fill="currentColor" d="m12 21.05l-9-7l1.65-1.25L12 18.5l7.35-5.7L21 14.05zM12 16L3 9l9-7l9 7z" />
+          </svg>
+        </button>
       </div>
     </div>
     <div id="map" class="fullscreen-map"></div>
@@ -43,7 +49,8 @@ export default {
     return {
       savedPoints: [],
       mapMarkers: [], // Track markers on the map
-      currentLayer: null // Track the current map layer
+      currentLayer: null, // Track the current map layer
+      currentLayerType: "default" // Track the current map type
     };
   },
   mounted() {
@@ -124,6 +131,7 @@ export default {
         maxZoom: 19,
         attribution: "© OpenStreetMap contributors"
       }).addTo(this.map);
+      this.currentLayerType = "default"; // Update the current map type
     },
     switchToTopoMap() {
       if (this.currentLayer) this.map.removeLayer(this.currentLayer);
@@ -131,6 +139,7 @@ export default {
         maxZoom: 17,
         attribution: "© OpenStreetMap contributors, © OpenTopoMap"
       }).addTo(this.map);
+      this.currentLayerType = "topo"; // Update the current map type
     },
     deletePoint(index) {
       const point = this.savedPoints[index];
@@ -272,6 +281,18 @@ export default {
 
 .button-group {
   @apply flex justify-around gap-2;
+}
+
+.button-group button {
+  @apply p-1 rounded transition-transform;
+}
+
+.button-group button.active {
+  @apply bg-blue-500 text-white scale-110;
+}
+
+.button-group button:hover {
+  @apply scale-110;
 }
 
 .fullscreen-map {

@@ -239,12 +239,15 @@ const handlePointSelected = (point) => {
         <div class="px-2">- It must be a csv file</div>
         <div class="px-2">
           - The file must include the headers
-          <span class="italic">sampleid, lat, long</span>
+          <span class="italic">sampleId, lat, long</span>
         </div>
         <div class="px-2">
           - The header
           <span class="italic">date</span>
           is optional
+        </div>
+        <div class="px-2">
+          - <span class="italic">sampleId</span> is correct, <span class="italic">sampleid</span> will not work.
         </div>
         <div class="px-2 text-blue-600">
           -

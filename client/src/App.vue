@@ -286,7 +286,7 @@ body {
 }
 
 .top-section {
-  @apply h-screen flex flex-col justify-center items-center;
+  @apply h-[90vh] flex flex-col items-center; /* Adjust height to leave gap */
 }
 
 .bottom-section {

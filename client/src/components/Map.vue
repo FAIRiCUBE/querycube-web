@@ -222,42 +222,19 @@ export default {
 }
 
 .coordinates-list {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(3px);
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 10px;
+  @apply absolute top-10 right-10 bg-white bg-opacity-60 backdrop-blur-md p-4 rounded-lg shadow z-10 border border-white/30 grid gap-2;
 }
 
 .coordinates-list h3 {
-  margin: 0;
-  color: #333;
-  font-weight: bold;
-  text-align: center;
+  @apply m-0 text-gray-700 font-semibold text-center text-sm;
 }
 
 .coordinates-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow-y: auto;
-  max-height: 200px;
+  @apply list-none p-0 m-0 overflow-y-auto max-h-48;
 }
 
 .coordinate-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  @apply flex justify-between items-center py-1 border-b border-gray-200 text-xs text-gray-600;
 }
 
 .coordinate-item:hover::after {
@@ -282,25 +259,19 @@ export default {
 }
 
 .actions {
-  display: flex;
-  gap: 5px;
+  @apply flex gap-1;
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  transition: transform 0.2s;
+  @apply w-4 h-4 cursor-pointer transition-transform;
 }
 
 .icon:hover {
-  transform: scale(1.1);
+  @apply scale-110;
 }
 
 .button-group {
-  display: flex;
-  justify-content: space-around;
-  gap: 10px;
+  @apply flex justify-around gap-2;
 }
 
 .fullscreen-map {

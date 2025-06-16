@@ -33,14 +33,8 @@ docker compose up --build -d
 
 ## TODO
 
-1. Documentation
-1. add format correct and thorough format-instructions in documentation-popup
-1. like "sampleId" rather than "sampleid", from getSamples in Objects in lib/querycube below
 1. add comment about the map in the documentation popup
-1. add pins to the map on the coordinates
 1. send query as csv file
-1. tooltips on locations show up twice, and one is slow. Fix that.
-
 ```python
     def getSamples(self, path):
         filtered_data = {}

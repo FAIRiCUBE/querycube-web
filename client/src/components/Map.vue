@@ -42,6 +42,7 @@ export default {
   data() {
     return {
       savedPoints: [],
+      mapMarkers: [], // Track markers on the map
       currentLayer: null // Track the current map layer
     };
   },
@@ -84,6 +85,14 @@ export default {
           const roundedLng = parseFloat(lng.toFixed(Math.min(8, lng.toString().split(".")[1]?.length || 0))); // Max 8 decimal places
           this.savedPoints.push({ lat: roundedLat, lng: roundedLng, name, date });
           this.$emit("pointSelected", { lat: roundedLat, lng: roundedLng, name, date });
+
+          // Add a marker to the map
+          const marker = L.marker([roundedLat, roundedLng]).addTo(this.map);
+          marker.bindTooltip(`Coordinates: ${roundedLat}, ${roundedLng} | Date: ${date}`, {
+            permanent: false,
+            direction: "top"
+          });
+          this.mapMarkers.push(marker);
         } else {
           alert("Please enter a name and select a valid date.");
         }
@@ -107,7 +116,19 @@ export default {
       }).addTo(this.map);
     },
     deletePoint(index) {
+      const point = this.savedPoints[index];
       this.savedPoints.splice(index, 1);
+
+      // Find and remove the marker associated with the deleted point
+      const markerToRemove = this.mapMarkers.find((marker) => {
+        const markerLatLng = marker.getLatLng();
+        return markerLatLng.lat === point.lat && markerLatLng.lng === point.lng;
+      });
+
+      if (markerToRemove) {
+        this.map.removeLayer(markerToRemove);
+        this.mapMarkers = this.mapMarkers.filter((marker) => marker !== markerToRemove);
+      }
     },
     generateCSV() {
       const csvContent = ["sampleId,lat,long,date"];

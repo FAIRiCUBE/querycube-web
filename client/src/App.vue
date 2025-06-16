@@ -286,7 +286,7 @@ body {
 }
 
 .top-section {
-  @apply h-[90vh] flex flex-col items-center; /* Adjust height to leave gap */
+  @apply h-[90vh] flex flex-col items-start pl-11; /* Adjust height to leave gap */
 }
 
 .bottom-section {

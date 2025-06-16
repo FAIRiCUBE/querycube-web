@@ -48,13 +48,30 @@ export default {
   },
   mounted() {
     // Initialize the map
-    this.map = L.map("map").setView([48.2052, 16.3599], 16); // Correct coordinates for the Natural History Museum in Vienna, Austria
+    this.map = L.map("map").setView([48.2052, 16.3539], 16); // Correct coordinates for the Natural History Museum in Vienna, Austria
 
     // Add default map tiles
     this.currentLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: "© OpenStreetMap contributors"
     }).addTo(this.map);
+
+    // Add a predefined sample location marker
+    const predefinedSample = {
+      lat: 48.2052423,
+      lng: 16.35974656,
+      name: "Sample Location",
+      date: "1891-01-01"
+    };
+
+    this.savedPoints.push(predefinedSample);
+
+    const marker = L.marker([predefinedSample.lat, predefinedSample.lng]).addTo(this.map);
+    marker.bindTooltip(`Coordinates: ${predefinedSample.lat}, ${predefinedSample.lng} | Date: ${predefinedSample.date}`, {
+      permanent: false,
+      direction: "top"
+    });
+    this.mapMarkers.push(marker);
 
     // Add click event to the map
     this.map.on("click", (e) => {

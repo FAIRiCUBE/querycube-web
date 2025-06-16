@@ -231,6 +231,35 @@ const handlePointSelected = (point) => {
       </div>
     </div>
   </div>
+  <!-- Documentation popup-window -->
+  <popup :show="showPopup" title="Documentation" @on-close="showPopup = false">
+    <div class="flex flex-col gap-2">
+      <div class="flex flex-col">
+        <div class="font-bold">Requirements for the file to upload</div>
+        <div class="px-2">- It must be a csv file</div>
+        <div class="px-2">
+          - The file must include the headers
+          <span class="italic">sampleid, lat, long</span>
+        </div>
+        <div class="px-2">
+          - The header
+          <span class="italic">date</span>
+          is optional
+        </div>
+        <div class="px-2 text-blue-600">
+          -
+          <a href="samplesfile.csv" class="hover:text-teal-600">Download a samplefile</a>
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <div class="font-bold">Layers</div>
+        <div class="px-2 text-blue-600">
+          -
+          <a href="https://fairicube.rasdaman.com/rasdaman/ows#/services" class="hover:text-teal-600" target="_blank">See available layers here</a>
+        </div>
+      </div>
+    </div>
+  </popup>
 </template>
 
 <style>

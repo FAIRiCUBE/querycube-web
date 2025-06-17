@@ -236,15 +236,9 @@ const handlePointSelected = (point) => {
     <div class="flex flex-col gap-2">
       <div class="flex flex-col">
         <div class="font-bold">Click on the map to add locations to your list</div>
-        <div class="px-2">
-          - Names with spaces or symbols like the full stop cause errors when sending the request.
-        </div>
-        <div class="px-2">
-          - The locations will be added to the map and the list.
-        </div>
-        <div class="px-2">
-          - You can download the list of locations as a csv file.
-        </div>
+        <div class="px-2">- Names with spaces or symbols like the full stop cause errors when sending the request.</div>
+        <div class="px-2">- The locations will be added to the map and the list.</div>
+        <div class="px-2">- You can download the list of locations as a csv file.</div>
         <div class="font-bold">Requirements for the file to upload</div>
         <div class="px-2">- It must be a csv file</div>
         <div class="px-2">
@@ -257,7 +251,11 @@ const handlePointSelected = (point) => {
           is optional
         </div>
         <div class="px-2">
-          - <span class="italic">sampleId</span> is correct, <span class="italic">sampleid</span> will not work.
+          -
+          <span class="italic">sampleId</span>
+          is correct,
+          <span class="italic">sampleid</span>
+          will not work.
         </div>
         <div class="px-2 text-blue-600">
           -
@@ -270,9 +268,46 @@ const handlePointSelected = (point) => {
           -
           <a href="https://fairicube.rasdaman.com/rasdaman/ows#/services" class="hover:text-teal-600" target="_blank">See available layers here</a>
         </div>
-        <div class="px-2">
-          - If you want a view of a topographic map, you may toggle with the buttons below the list of positions. This has no effect on the data being queried.
-        </div>
+        <div class="px-2">- If you want a view of a topographic map, you may toggle with the buttons below the list of positions. This has no effect on the data being queried.</div>
+      </div>
+    </div>
+  </popup>
+
+  <!-- File confirmation popup-window -->
+  <popup :show="showConfirm" title="Is this the file you want to upload?">
+    <div class="flex flex-col gap-2">
+      <div class="flex gap-1">
+        <div class="font-bold">File:</div>
+        <div class="flex-1 truncate">{{ file ? file.files[0].name : "" }}</div>
+      </div>
+      <div class="flex gap-1">
+        <div class="font-bold">Size:</div>
+        <div class="flex-1 truncate">{{ file ? file.files[0].size : "" }}</div>
+      </div>
+      <div class="flex gap-1 mb-2">
+        <div class="font-bold">Type:</div>
+        <div class="flex-1 truncate">{{ file ? file.files[0].type : "" }}</div>
+      </div>
+      <div class="border-b"></div>
+      <div class="flex gap-2 mt-2">
+        <button
+          class="btn btn-primary"
+          @click="
+            showConfirm = false;
+            reset();
+          "
+        >
+          No
+        </button>
+        <button
+          class="btn btn-primary"
+          @click="
+            showConfirm = false;
+            onFileChange();
+          "
+        >
+          Yes
+        </button>
       </div>
     </div>
   </popup>

@@ -71,11 +71,13 @@ export default {
   },
   mounted() {
     // Initialize the map
-    this.map = L.map("map").setView([48.2052, 16.3539], 5); // Correct coordinates for the Natural History Museum in Vienna, Austria
+    this.map = L.map("map", {
+      crs: L.CRS.EPSG3857 // Ensure the map uses the correct projection
+    }).setView([48.2052, 16.3539], 5);
 
     // Add default map tiles
     this.currentLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
+      maxZoom: 22,
       attribution: "© OpenStreetMap contributors"
     }).addTo(this.map);
 
@@ -95,6 +97,7 @@ export default {
       direction: "top"
     });
     this.mapMarkers.push(marker);
+
 
     // Add click event to the map
     this.map.on("click", (e) => {
@@ -144,7 +147,7 @@ export default {
     switchToDefaultMap() {
       if (this.currentLayer) this.map.removeLayer(this.currentLayer);
       this.currentLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
+        maxZoom: 22,
         attribution: "© OpenStreetMap contributors"
       }).addTo(this.map);
       this.currentLayerType = "default"; // Update the current map type
@@ -152,7 +155,7 @@ export default {
     switchToTopoMap() {
       if (this.currentLayer) this.map.removeLayer(this.currentLayer);
       this.currentLayer = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-        maxZoom: 17,
+        maxZoom: 22,
         attribution: "© OpenStreetMap contributors, © OpenTopoMap"
       }).addTo(this.map);
       this.currentLayerType = "topo"; // Update the current map type

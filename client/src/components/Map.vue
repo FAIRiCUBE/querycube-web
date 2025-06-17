@@ -44,7 +44,19 @@
 <script>
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import fetcher from "./../lib/fetcher"; // Import fetcher
+
+// Set custom marker icon
+const customIcon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28]
+});
 
 export default {
   name: "MapComponent",
@@ -71,13 +83,13 @@ export default {
     const predefinedSample = {
       lat: 48.2052423,
       lng: 16.35974656,
-      name: "Sample Location",
+      name: "Sample_Location",
       date: "1891-01-01"
     };
 
     this.savedPoints.push(predefinedSample);
 
-    const marker = L.marker([predefinedSample.lat, predefinedSample.lng]).addTo(this.map);
+    const marker = L.marker([predefinedSample.lat, predefinedSample.lng], { icon: customIcon }).addTo(this.map);
     marker.bindTooltip(`Coordinates: ${predefinedSample.lat}, ${predefinedSample.lng} | Date: ${predefinedSample.date}`, {
       permanent: false,
       direction: "top"
@@ -115,7 +127,7 @@ export default {
           this.$emit("pointSelected", { lat: roundedLat, lng: roundedLng, name, date });
 
           // Add a marker to the map
-          const marker = L.marker([roundedLat, roundedLng]).addTo(this.map);
+          const marker = L.marker([roundedLat, roundedLng], { icon: customIcon }).addTo(this.map);
           marker.bindTooltip(`Coordinates: ${roundedLat}, ${roundedLng} | Date: ${date}`, {
             permanent: false,
             direction: "top"

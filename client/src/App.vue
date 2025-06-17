@@ -235,6 +235,16 @@ const handlePointSelected = (point) => {
   <popup :show="showPopup" title="Documentation" @on-close="showPopup = false">
     <div class="flex flex-col gap-2">
       <div class="flex flex-col">
+        <div class="font-bold">Click on the map to add locations to your list</div>
+        <div class="px-2">
+          - Names with spaces or symbols like the full stop cause errors when sending the request.
+        </div>
+        <div class="px-2">
+          - The locations will be added to the map and the list.
+        </div>
+        <div class="px-2">
+          - You can download the list of locations as a csv file.
+        </div>
         <div class="font-bold">Requirements for the file to upload</div>
         <div class="px-2">- It must be a csv file</div>
         <div class="px-2">
@@ -255,10 +265,13 @@ const handlePointSelected = (point) => {
         </div>
       </div>
       <div class="flex flex-col">
-        <div class="font-bold">Layers</div>
+        <div class="font-bold">Layers of data being queried</div>
         <div class="px-2 text-blue-600">
           -
           <a href="https://fairicube.rasdaman.com/rasdaman/ows#/services" class="hover:text-teal-600" target="_blank">See available layers here</a>
+        </div>
+        <div class="px-2">
+          - If you want a view of a topographic map, you may toggle with the buttons below the list of positions. This has no effect on the data being queried.
         </div>
       </div>
     </div>

@@ -59,7 +59,7 @@ export default {
   },
   mounted() {
     // Initialize the map
-    this.map = L.map("map").setView([48.2052, 16.3539], 16); // Correct coordinates for the Natural History Museum in Vienna, Austria
+    this.map = L.map("map").setView([48.2052, 16.3539], 5); // Correct coordinates for the Natural History Museum in Vienna, Austria
 
     // Add default map tiles
     this.currentLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

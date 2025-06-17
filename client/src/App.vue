@@ -11,6 +11,7 @@ import IconHelp from "~icons/ic/twotone-help";
 import fetcher from "./lib/fetcher";
 import reader from "./lib/reader";
 import Popup from "./components/Popup.vue";
+import MapComponent from "./components/Map.vue";
 
 var file = ref(null);
 var dragging = ref(false);
@@ -158,9 +159,121 @@ const reset = () => {
   file.value = null;
   error.value = null;
 };
+
+const handlePointSelected = (point) => {
+  console.log("Point selected:", point);
+};
 </script>
 
 <template>
+  <!-- MAP BACKGROUND -->
+  <MapComponent class="fixed inset-0 z-0 pointer-events-auto" @pointSelected="handlePointSelected" />
+
+  <!-- CONTENT -->
+  <div class="content-container relative z-10">
+    <!-- TOP SECTION -->
+    <div class="top-section flex flex-col items-center">
+      <!-- LOGO AND OPTIONS CONTAINER -->
+      <div class="glassmorphism-container w-full max-w-[500px] mt-4 p-4 rounded-lg pointer-events-auto">
+        <!-- LOGO -->
+        <div class="flex flex-col items-center">
+          <img src="/fairicube_logo.png" class="w-20" />
+          <div class="font-semibold text-lg">QueryCube</div>
+          <div class="flex gap-2 text-lg">
+            <a href="https://fairicube.nilu.no/"><icon-web class="text-[#5e81ac] hover:text-teal-600 hover:cursor-pointer" /></a>
+            <a href="https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/QueryCube"><icon-github class="text-[#b48ead] hover:text-teal-600 hover:cursor-pointer" /></a>
+          </div>
+        </div>
+
+        <!-- OPTIONS -->
+        <div class="flex flex-col items-center gap-2 mt-4">
+          <div class="rounded border-2 border-dashed bg-white p-6 flex flex-col items-center gap-2 hover:cursor-pointer hover:border-teal-600" :class="[dragging ? 'border-teal-600 ' : 'border-gray-400 ']" @dragover="onFileDragover" @dragleave="onFileDragleave" @drop="onFileDrop" @click="$refs.file.click()">
+            <div>
+              <icon-add class="text-xl" v-if="!loading" />
+              <icon-loading class="text-2xl animate-spin" v-else />
+            </div>
+            <div class="text-center">
+              <span v-if="!loading">Drag and drop, or click to upload file and generate data</span>
+              <span v-else>
+                <b>Loading...</b>
+                <br />
+                This may take a while...
+              </span>
+            </div>
+            <input type="file" class="hidden" accept=".csv" ref="file" @change="showConfirm = true" />
+          </div>
+          <div class="flex cursor-pointer gap-1 hover:text-blue-600 text-gray-700" @click="showPopup = true">
+            <icon-help class="self-center" />
+            <div class="self-center">Documentation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SECTION -->
+    <div class="bottom-section w-[90%] mx-auto px-6 rounded-lg shadow-lg bg-white/80 pointer-events-auto">
+      <!-- RESULTS -->
+      <div class="w-full flex flex-col">
+        <div class="flex gap-2">
+          <div class="font-bold self-center">Result</div>
+          <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
+        </div>
+        <div id="dataGrid" class="w-full"></div>
+      </div>
+
+      <!-- LOG -->
+      <div class="w-full flex flex-col mt-6">
+        <div class="flex gap-2">
+          <div class="font-bold self-center">Log</div>
+          <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
+        </div>
+        <div id="logGrid" class="w-full"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Documentation popup-window -->
+  <popup :show="showPopup" title="Documentation" @on-close="showPopup = false">
+    <div class="flex flex-col gap-2">
+      <div class="flex flex-col">
+        <div class="font-bold">Click on the map to add locations to your list</div>
+        <div class="px-2">- Names with spaces or symbols like the full stop cause errors when sending the request.</div>
+        <div class="px-2">- The locations will be added to the map and the list.</div>
+        <div class="px-2">- You can download the list of locations as a csv file.</div>
+        <div class="font-bold">Requirements for the file to upload</div>
+        <div class="px-2">- It must be a csv file</div>
+        <div class="px-2">
+          - The file must include the headers
+          <span class="italic">sampleId, lat, long</span>
+        </div>
+        <div class="px-2">
+          - The header
+          <span class="italic">date</span>
+          is optional
+        </div>
+        <div class="px-2">
+          -
+          <span class="italic">sampleId</span>
+          is correct,
+          <span class="italic">sampleid</span>
+          will not work.
+        </div>
+        <div class="px-2 text-blue-600">
+          -
+          <a href="samplesfile.csv" class="hover:text-teal-600">Download a samplefile</a>
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <div class="font-bold">Layers of data being queried</div>
+        <div class="px-2 text-blue-600">
+          -
+          <a href="https://fairicube.rasdaman.com/rasdaman/ows#/services" class="hover:text-teal-600" target="_blank">See available layers here</a>
+        </div>
+        <div class="px-2">- If you want a view of a topographic map, you may toggle with the buttons below the list of positions. This has no effect on the data being queried.</div>
+      </div>
+    </div>
+  </popup>
+
+  <!-- File confirmation popup-window -->
   <popup :show="showConfirm" title="Is this the file you want to upload?">
     <div class="flex flex-col gap-2">
       <div class="flex gap-1">
@@ -198,110 +311,38 @@ const reset = () => {
       </div>
     </div>
   </popup>
-  <popup :show="showPopup" title="Documentation" @on-close="showPopup = false">
-    <div class="flex flex-col gap-2">
-      <div class="flex flex-col">
-        <div class="font-bold">Requirements for the file to upload</div>
-        <div class="px-2">- It must be a csv file</div>
-        <div class="px-2">
-          - The file must include the headers
-          <span class="italic">sampleid, lat, long</span>
-        </div>
-        <div class="px-2">
-          - The header
-          <span class="italic">date</span>
-          is optional
-        </div>
-        <div class="px-2 text-blue-600">
-          -
-          <a href="samplesfile.csv" class="hover:text-teal-600">Download a samplefile</a>
-        </div>
-      </div>
-      <div class="flex flex-col">
-        <div class="font-bold">Layers</div>
-        <div class="px-2 text-blue-600">
-          -
-          <a href="https://fairicube.rasdaman.com/rasdaman/ows#/services" class="hover:text-teal-600" target="_blank">See available layers here</a>
-        </div>
-      </div>
-    </div>
-  </popup>
-  <!-- LOGO -->
-  <div class="flex flex-col self-center">
-    <img src="/fairicube_logo.png" class="w-20 self-center" />
-    <div class="self-center font-semibold text-lg">QueryCube</div>
-    <div class="flex gap-2 self-center text-lg">
-      <a href="https://fairicube.nilu.no/"><icon-web class="self-center text-[#5e81ac] hover:text-teal-600 hover:cursor-pointer" /></a>
-      <a href="https://github.com/FAIRiCUBE/uc3-drosophola-genetics/tree/main/projects/QueryCube"><icon-github class="self-center text-[#b48ead] hover:text-teal-600 hover:cursor-pointer" /></a>
-    </div>
-  </div>
-
-  <!-- OPTIONS -->
-  <div class="self-center flex flex-col items-center gap-2">
-    <div class="rounded border-2 border-dashed md:w-[800px] bg-white p-6 flex flex-col items-center gap-2 hover:cursor-pointer hover:border-teal-600" :class="[dragging ? 'border-teal-600 ' : 'border-gray-400 ']" @dragover="onFileDragover" @dragleave="onFileDragleave" @drop="onFileDrop" @click="$refs.file.click()">
-      <div>
-        <icon-add class="text-xl" v-if="!loading" />
-        <icon-loading class="text-2xl animate-spin" v-else />
-      </div>
-      <div class="text-center">
-        <span v-if="!loading">Drag and drop or click to upload file and generate data</span>
-        <span v-else>
-          <b>Loading...</b>
-          <br />
-          This may take a while...
-        </span>
-      </div>
-      <!-- <div class="text-sm font-bold">Max file size: 10 MB</div> -->
-      <input type="file" class="hidden" accept=".csv" ref="file" @change="showConfirm = true" />
-    </div>
-    <div class="flex cursor-pointer gap-1 hover:text-blue-600 text-gray-700" @click="showPopup = true">
-      <icon-help class="self-center" />
-      <div class="self-center">Documentation</div>
-    </div>
-  </div>
-
-  <!-- ERROR -->
-  <div v-if="error" class="flex flex-col self-center md:w-[800px] border border-gray-300 rounded bg-white p-2 gap-2">
-    <div class="flex gap-2">
-      <div class="self-center">
-        <icon-error class="text-red-500" />
-      </div>
-      <div class="self-center flex-1">{{ error }}</div>
-    </div>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="w-full flex flex-col">
-    <div class="flex gap-2">
-      <div class="font-bold self-center">Result</div>
-      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(datagrid, 'querycube_result.csv')" />
-    </div>
-    <div id="dataGrid" class="w-full"></div>
-  </div>
-
-  <!-- LOG -->
-  <div class="w-full flex flex-col">
-    <div class="flex gap-2">
-      <div class="font-bold self-center">Log</div>
-      <icon-download class="self-center text-[#d08770] hover:text-teal-600 hover:cursor-pointer" @click="downloadGrid(logGrid, 'querycube_log.csv')" />
-    </div>
-    <div id="logGrid" class="w-full"></div>
-  </div>
 </template>
 
 <style>
 html,
 body {
-  @apply h-full w-full text-[17px];
+  @apply h-full w-full text-[17px] m-0;
 }
 
 body {
-  @apply h-full font-sans antialiased m-0;
+  @apply h-full font-sans antialiased;
   background-color: #ededeb;
+  overflow-y: auto; /* Allow scrolling */
 }
 
 #app {
-  @apply flex flex-col min-h-full items-stretch relative flex-1 w-full h-full p-6 gap-6;
+  @apply relative flex flex-col min-h-full items-stretch w-full;
+}
+
+.content-container {
+  @apply relative flex flex-col min-h-screen pointer-events-none; /* Disable pointer events by default */
+}
+
+.top-section {
+  @apply h-[90vh] flex flex-col items-start pl-11; /* Adjust height to leave gap */
+}
+
+.bottom-section {
+  @apply min-h-screen mt-0 py-6; /* Ensure it takes up the full screen */
+}
+
+.glassmorphism-container {
+  @apply bg-white/60 backdrop-blur-md shadow-md pointer-events-auto; /* Enable pointer events only for the container */
 }
 
 .btn {
